@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Playback</title>
+    <style>
+        .div1 {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        video {
+            max-width: 70%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="div1">
+        <video id="videoPlayer" controls>
+            <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <script>
+        let socket;
+
+        function connectWebSocket() {
+            socket = new WebSocket('ws://localhost:8080'); // Update to localhost
+
+            socket.onopen = () => {
+                console.log('Connected to the server');
+            };
+
+            socket.onmessage = (event) => {
+                console.log('Message from server:', event.data);
+            };
+
+            socket.onclose = () => {
+                console.log('Disconnected from the server');
+                setTimeout(connectWebSocket, 5000); // Attempt to reconnect after 5 seconds
+            };
+
+            socket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                setTimeout(connectWebSocket, 5000); // Attempt to reconnect after 5 seconds
+            };
+        }
+
+        function sendMessage(message) {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                console.log('Sending:', message);
+                socket.send(message);
+            } else {
+                console.error('WebSocket not open');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const videoPlayer = document.getElementById('videoPlayer');
+
+            connectWebSocket();
+
+            videoPlayer.addEventListener('play', () => {
+                sendMessage('Online'); // Update status to Online when video is playing
+            });
+
+            videoPlayer.addEventListener('pause', () => {
+                sendMessage('Offline'); // Update status to Offline when video is paused
+            });
+        });
+    </script>
+</body>
+</html>

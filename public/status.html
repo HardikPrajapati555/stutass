@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Status</title>
+    <style>
+        .div1 {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #status {
+            color: red;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="div1">
+        <h1>WebSocket Connection Status</h1>
+        <h1 id="status">Status: Connecting...</h1>
+        <button id="showVideoButton">Go to Video</button>
+    </div>
+
+    <script>
+        let socket;
+        const statusElement = document.getElementById('status');
+
+        document.getElementById('showVideoButton').addEventListener('click', () => {
+            window.location.href = 'video.html';
+        });
+
+        function connectWebSocket() {
+            socket = new WebSocket('ws://localhost:8080'); // Update to localhost
+
+            socket.onopen = () => {
+                console.log('Connected to the server');
+                updateStatus('Online'); // Set initial status as online
+            };
+
+            socket.onmessage = (event) => {
+                console.log('Message from server:', event.data);
+                updateStatus(event.data);
+            };
+
+            socket.onclose = () => {
+                console.log('Disconnected from the server');
+                updateStatus('Offline');
+                setTimeout(connectWebSocket, 5000); // Attempt to reconnect after 5 seconds
+            };
+
+            socket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateStatus('Error');
+                setTimeout(connectWebSocket, 5000); // Attempt to reconnect after 5 seconds
+            };
+        }
+
+        function updateStatus(status) {
+            if (statusElement) {
+                statusElement.textContent = `Status: ${status}`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', connectWebSocket);
+    </script>
+</body>
+</html>
