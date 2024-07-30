@@ -1,5 +1,3 @@
-
-
 const WebSocket = require('ws');
 const http = require('http');
 const fs = require('fs');
@@ -42,7 +40,7 @@ wss.on('connection', (ws) => {
         if (Buffer.isBuffer(message)) {
             message = message.toString();
         }
-        
+
         console.log('Received:', message);
 
         // Broadcast the message to all clients
@@ -68,10 +66,9 @@ wss.on('connection', (ws) => {
     });
 });
 
-// Start the HTTP server on port 8080 and bind to localhost
-const PORT = 8080;
-const IP_ADDRESS = 'localhost'; // Use 'localhost' or '0.0.0.0' for development
+// Start the HTTP server
+const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, IP_ADDRESS, () => {
-    console.log(`Server is listening on http://${IP_ADDRESS}:${PORT}`);
+server.listen(PORT, () => {
+    console.log(`Server is listening on https://stutass.onrender.com`);
 });
