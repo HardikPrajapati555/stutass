@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -30,7 +30,8 @@
         let socket;
 
         function connectWebSocket() {
-            socket = new WebSocket('ws://localhost:8080'); // Update to localhost
+            // Update WebSocket URL for live server
+            socket = new WebSocket('wss://stutass.onrender.com'); 
 
             socket.onopen = () => {
                 console.log('Connected to the server');
